@@ -1,0 +1,538 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game TopUp</title>
+  <link rel="icon" type="image/x-icon" href="images/logo.png">
+    <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <script src="js/qrcode.min.js"></script>
+  
+<style>
+  #myModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    overflow: auto;
+  }
+
+  .modal-content {
+    width: 500px; 
+    max-width: 80%;
+    background-color: white;
+    padding: 20px;
+   
+    border: 1px solid red;
+    box-shadow: 0 10px 8px rgba(0, 0, 0, 0.1);
+  }
+  #qr-code-container-popup {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+  .fixed-box {
+      position: fixed;
+      bottom: 0;
+      
+      left: 0;
+      width: 98%;
+      padding: 9px;
+      background-color: white;
+      display: flex;
+      border-radius: 2px;
+      border: 0.05px solid black;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .fixed-box button {
+      padding: 6px 15px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .fixed-box p {
+      margin: 0;
+    }
+    .package-select {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 380px; /* Adjust width as needed */
+      border: 0.00px solid #ccc;
+      padding: 10px;
+    }
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 10px;
+        box-sizing: border-box;
+        font-size: 14px;
+        background-color: #00223b;
+        color: #ffffff;
+    }
+
+    .package-box {
+      display: flex;
+      flex: 1;
+      box-shadow: 0px 0px 4px black;
+      border-radius: 8px;
+      font-size: 10px;
+      align-items: center;
+      color: black;
+      background-color: white;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 800;
+      border: 0.02px solid #ddd;
+      padding: 5px 8px;
+      transition: color 0.5s ease; /* Color transition effect */
+    }
+
+    .package-box:hover {
+      background-color: grey; /* Optional: Highlight on hover */
+    }
+
+    .mini-logo {
+      width: 35px; /* Adjust logo size as needed */
+      margin-right: 15px;
+    }
+
+    .selected {
+      color: #00f; /* Change to your desired color */
+      font-weight: bold;
+    }
+
+    #selectedInfo {
+      margin-top: 10px;
+    }
+    #invalid-message {
+      color: red;
+      font-weight: bold;
+    }
+    .container {
+        max-width: 500px;
+        margin: 0 auto;
+        text-align: center;
+      }
+      #img-container img {
+        width: 100%;
+        border-radius: 6px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+      .package-button {
+        margin: 2px;
+        
+        flex-grow: 2;
+        padding: 5px;
+        border: 1px solid #ccc;
+        text-align: center;
+        
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        font-size: 12px;
+      }
+      .selected {
+        background-color: #B6F4A9;
+        color: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+            #header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        #header img {
+            border-radius: 5px;
+            max-width: 56px;
+            height: auto;
+        }
+
+        #blackLine {
+            width: 100%;
+            height: 1px;
+            background-color: black;
+            margin: 10px 0;
+        }
+
+        #storeName {
+            font-size: 11px;
+            font-weight: bold;
+            color: grey;
+        }
+
+        #amount {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #28a745;
+        }
+
+        #qrCode {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        #timeoutMessage {
+            color: grey;
+            font-size: 10px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .background-img {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .overlay-img {
+            position: relative;
+        }
+
+        #qrcode {
+            position: absolute;
+            top: 68%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .countdown-text {
+            position: absolute;
+            top: 20px;
+            left: 80px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #paymentDetails {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #paymentAmount {
+            text-align: left;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        #timeRemaining {
+            text-align: right;
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        /* Style for the download button */
+        button {
+            background-color: red;
+            font-size: 11px;
+            color: white;
+            padding: 3px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .payment-section {
+      text-align: center;
+    }
+
+    .payment-text {
+      margin-bottom: 5px;
+      font-size: 15px;
+    }
+
+    .payment-logos {
+      display: flex;
+      gap: 15px;
+      border-radius: px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .payment-logo {
+       border-radius: 11px;
+       border: 1px solid grey;
+      width: 30px;
+      height: 30px;
+    }
+    #blackLine {
+            width: 100%;
+            height: 1px;
+            background-color: grey;
+            margin: 1px 0;
+        }
+        #selectedInfo {
+    color: black;
+  }
+   #selectedInfo1 {
+      font-weight: bold;
+      font-size: 11px;
+      color: red;
+      text-align: center;
+    }
+    #countdown {
+      font-weight: bold;
+      font-size: 11px;
+      color: grey;
+      text-align: center;
+    }
+    .mx-2 h3.black {
+    font-size: 21.5px;
+    font-weight: bold;
+}
+
+</style></head>
+
+<body>
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; background-color: #fff; padding: 20px 15px; border-radius: 15px;">
+  <h3 style="color: black; font-weight: 600;">1. បញ្ចូលព័ត៌មាន</h3>
+  <div style="display: flex; gap: 10px; flex-wrap: wrap;" class="input-group">
+    <input type="text" class="form-control" id="userId" name="userId" placeholder="( បញ្ចូល User ID )">
+      
+    <input type="text" class="form-control" id="serverId" name="serverId" placeholder=" ( បញ្ចូល Server ID )">
+  </div>
+  <div>
+    <p>
+      <p <button style="padding: 5px 14px; font-size: 14px; font-weight: 600;" type="button" class="btn btn-primary" onclick="checkApi()">Check ID</button> <div id="invalid-message" class="mt-3" style="text-align: center; color: #000000;"></div></p>
+      <p style="color: black; font-size: 17px; font-weight: 600;">ដើម្បីឃើញ UserID សូមចូលទៅក្នងហ្គេម ហើយចុចរូបភាព Avatar នៅខាងឆ្វេងអេក្រង់កញ្ចក់ ហើយចុចទៅកាន់"Check ID" ពេលនោះ User ID និងបង្ហាញឲ្យឃើញ បន្ទាប់មកសូមយក User ID នោះមកបំពេញ។ ឧទាហរណ៍: User ID: 123456789, Zone ID: 1234។</p>
+    </p>
+  </div>
+</div>
+<br><br>
+
+  <div id="qr-code"></div>
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; background-color: #fff; padding: 20px 15px; border-radius: 15px;">
+  <h3 style="color: black; font-weight: 600;">2. ជ្រើសរើសកញ្ចប់</h3>
+  <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+    <div class="package-box" data-item="Weekly" data-price="1.70">
+      <img src="images/weekly_f40c8a7fbc.webp" alt="Mini Logo" class="mini-logo">
+      Weekly 1.70$
+    </div>
+    <div class="package-box" data-item="11" data-price="0.25">
+      <img src="images/B5dGPDMTCpbsmCcbRou.png" alt="Mini Logo" class="mini-logo">
+      11 0.25$
+    </div>
+    <div class="package-box" data-item="56" data-price="0.90">
+      <img src="images/oqpNqB2IoMfykqMSOBA.png" alt="Mini Logo" class="mini-logo">
+      56 0.90$
+    </div>
+ 
+    <div class="package-box" data-item="86" data-price="1.40">
+      <img src="images/oqpNqB2IoMfykqMSOBA.png" alt="Mini Logo" class="mini-logo">
+      86 1.40$
+    </div>
+    <div class="package-box" data-item="112" data-price="1.80">
+      <img src="images/oqpNqB2IoMfykqMSOBA.png" alt="Mini Logo" class="mini-logo">
+      112 1.80$
+    </div>
+    <div class="package-box" data-item="172" data-price="2.70">
+      <img src="images/oqpNqB2IoMfykqMSOBA.png" alt="Mini Logo" class="mini-logo">
+      172 2.70$
+    </div>
+    <div class="package-box" data-item="257" data-price="3.90">
+      <img src="images/50ormore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+      257 3.90$
+    </div>
+    <div class="package-box" data-item="284" data-price="4.10">
+      <img src="images/50ormore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+      284 4.10$
+    </div>
+    <div class="package-box" data-item="355" data-price="5.20">
+      <img src="images/50ormore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+     355 5.20$
+    </div>
+    <div class="package-box" data-item="429" data-price="6.50">
+      <img src="images/50ormore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+      429 6.50$
+    </div>
+    <div class="package-box" data-item="514" data-price="7.70">
+      <img src="images/50ormore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+      514 7.70$
+    </div>
+    <div class="package-box" data-item="583" data-price="8.20">
+      <img src="images/1500orMore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+      583 8.20$
+    </div>
+    <div class="package-box" data-item="600" data-price="8.70">
+      <img src="images/1500orMore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+      600 8.70$
+    </div>
+    <div class="package-box" data-item="716" data-price="10.20">
+      <img src="images/1500orMore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+      716 10.20$
+    </div>
+    <div class="package-box" data-item="792" data-price="11.40">
+      <img src="images/1500orMore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+      792 11.40$
+    </div>
+    <div class="package-box" data-item="850" data-price="12.30">
+      <img src="images/500orMore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+      850 12.30$
+    </div>
+    <div class="package-box" data-item="963" data-price="14.00">
+      <img src="images/500orMore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+   963 14.00$
+    </div>
+    <div class="package-box" data-item="1145" data-price="16.20">
+      <img src="images/500orMore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+      1145 16.20$
+    </div>
+    <div class="package-box" data-item="1145" data-price="16.60">
+      <img src="images/500orMore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+      1163 16.60$
+    </div>
+    <div class="package-box" data-item="1355" data-price="17.90">
+      <img src="images/500orMore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+      1355 17.90$
+    </div>
+    <div class="package-box" data-item="1460" data-price="20.50">
+      <img src="images/500orMore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+      1460 20.50$
+    </div>
+    <div class="package-box" data-item="1586" data-price="23.00">
+      <img src="images/1000orMore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+      1586 23.00$
+    </div>
+    <div class="package-box" data-item="1712" data-price="24.60">
+      <img src="images/1000orMore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+    1712 24.60$
+    </div>
+    <div class="package-box" data-item="2015" data-price="29.00">
+      <img src="images/1000orMore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+      2015 29.00$
+    </div>
+    <div class="package-box" data-item="2302" data-price="32.00">
+      <img src="images/1000orMore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+      2302 32.00$
+    </div>
+    <div class="package-box" data-item="3692" data-price="47.00">
+      <img src="images/1000orMore_MLBB_Diamonds.png" alt="Mini Logo" class="mini-logo">
+      3475 47.00$
+    </div>
+  </div>
+</div>
+<br><br>
+      <div class="payment-section">
+      	<p> យើងទទួលយកការទូទាត់គ្រប់ធនាគារ </p>
+    <div class="payment-logos">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcI-93A_QrCqEfm8dni2J3-fMPESJhs5nWWA&amp;usqp=CAU" alt="Bank Logo 1" class="payment-logo">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdBTwD4CI_n-LZhLtn2B7srr8OnCE0uyyCgg&amp;usqp=CAU" alt="Bank Logo 2" class="payment-logo">
+      <img src="data:image/png;base64,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" alt="Bank Logo 3" class="payment-logo">
+      	<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZjL7PlAwZGSqrHA5qOBd9qhgZyBWractM_A&amp;usqp=CAU" alt="Bank Logo 3" class="payment-logo">
+      	<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTotUSZwUzUOLvnGLUaPNk70rr-JVtAWtJb2Q&amp;s" alt="Bank Logo 3" class="payment-logo">
+      	<img src="https://play-lh.googleusercontent.com/80VUamRUVkzf1kYcc3UIVkj4IHCOtfAb02w-EKqKkvDCnrnKkb5NDshunAYcEbhzK0xZ" alt="Bank Logo 3" class="payment-logo">
+    </div>
+    
+  </div>
+  
+ 
+      
+    </div>
+  
+  <p>hello</p>
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+    	<div id="header">
+            <img src="images/QR_KHQR.svg" alt="Mino Bank Logo">
+            <div id="storeName">ទូទាត់ជាមួយ KHQR</div>
+            
+        </div>
+        
+ 
+  <div class="container">
+            <div class="overlay-img">
+            	
+        
+                <img src="images/qr.png" alt="Background Image" class="background-img">
+                <div id="qrcode"></div>
+                <div id="qr-code-container-popup"></div>
+            </div>
+        </div>
+        <br><br>
+        <div id="header">
+        <div id="selectedInfo1"></div>
+        <div id="countdown"> ពេលវេលានៅសល់ 19 : 58 នាទី </div>
+        </div>
+        <br><br>
+      <div class="payment-section">
+      	
+    <div class="payment-logos">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRcI-93A_QrCqEfm8dni2J3-fMPESJhs5nWWA&amp;usqp=CAU" alt="Bank Logo 1" class="payment-logo">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdBTwD4CI_n-LZhLtn2B7srr8OnCE0uyyCgg&amp;usqp=CAU" alt="Bank Logo 2" class="payment-logo">
+      <img src="data:image/png;base64,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" alt="Bank Logo 3" class="payment-logo">
+      	<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZjL7PlAwZGSqrHA5qOBd9qhgZyBWractM_A&amp;usqp=CAU" alt="Bank Logo 3" class="payment-logo">
+      	<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTotUSZwUzUOLvnGLUaPNk70rr-JVtAWtJb2Q&amp;s" alt="Bank Logo 3" class="payment-logo">
+      	<img src="https://play-lh.googleusercontent.com/80VUamRUVkzf1kYcc3UIVkj4IHCOtfAb02w-EKqKkvDCnrnKkb5NDshunAYcEbhzK0xZ" alt="Bank Logo 3" class="payment-logo">
+    </div>
+    
+  </div>
+  
+ 
+      
+    </div>
+  </div>
+<div class="fixed-box">
+  <div id="selectedInfo"></div>
+  <button id="startPaymentButton" class="btn btn-primary" disabled="" onclick="startPayment()">ទូទាត់ឥឡូវនេះ</button>
+</div>
+<script src="js/qrcode.min.js"></script>
+  <script src="js/jquery-3.6.4.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+
+  
+  <script>
+// Set the end time for the countdown (2 minutes in milliseconds)
+const endTime = Date.now() + 20 * 60 * 1000;
+
+// Get the countdown element
+const countdownElement = document.getElementById('countdown');
+
+// Update the countdown every second
+const countdownInterval = setInterval(function () {
+  // Calculate the remaining time
+  const currentTime = Date.now();
+  const remainingTime = endTime - currentTime;
+
+  // Check if the countdown has ended
+  if (remainingTime <= 0) {
+    // Redirect to the desired link
+    window.location.href = '';
+
+    // Clear the interval to stop the countdown
+    clearInterval(countdownInterval);
+  } else {
+    // Update the countdown display
+    const minutes = Math.floor(remainingTime / 60000);
+    const seconds = Math.floor((remainingTime % 60000) / 1000);
+
+    // Display the countdown in the element
+    countdownElement.textContent = ` ពេលវេលានៅសល់ ${minutes} : ${seconds} នាទី `;
+  }
+}, 1000);
+</script>
+<script src="js/script.js"></script>
+
+
+
+</body></html>
